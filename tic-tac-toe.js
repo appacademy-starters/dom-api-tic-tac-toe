@@ -7,7 +7,7 @@ window.addEventListener("DOMContentLoaded", event => {
     const giveUpButton = buttons[1];
     let giveUp = ''
 
-    console.log('this is nightmare only');
+    console.log('this is nightmare only')
     // Empty board is just an array of spaces. Fill in x or o for each turn.
     let boardStatus = ['', '', '',
                        '', '', '',
@@ -142,7 +142,6 @@ window.addEventListener("DOMContentLoaded", event => {
         let giveUp = savedState[2];
         boardStatus = board;
         xTurn = turn;
-        console.log(giveUp);
 
 
 
