@@ -5,10 +5,21 @@ window.addEventListener("DOMContentLoaded", event => {
     const newGameButton = buttons[0];
     newGameButton.style.display = 'none'
     const giveUpButton = buttons[1];
-    let giveUp = ''
 
-    console.log('this is nightmare only')
+
+    const xSymbol = document.createElement('img');
+    xSymbol.setAttribute('src', 'https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-x.svg');
+    let giveUp = ''
+    // sets computer randomly to be X or O.
+    let computer;
+    if (Math.random() > .5) {
+        computer = 'X'
+    } else {
+        computer = 'O'
+    }
+
     // Empty board is just an array of spaces. Fill in x or o for each turn.
+    let remainingIndex = ['0','1','2','3','4','5','6','7','8']
     let boardStatus = ['', '', '',
                        '', '', '',
                        '', '', '']
@@ -16,9 +27,8 @@ window.addEventListener("DOMContentLoaded", event => {
     // X starts the game by default. Swaps every turn
     let xTurn = true;
     loadGameState()
+    // main game loop - listening for click events on the square divs
 
-
-    // main game loop listening for click events on the square divs
     for (let i = 0; i < squares.length; i++) {
         squares[i].addEventListener('click', event => {
             let square = squares[i];
@@ -30,17 +40,43 @@ window.addEventListener("DOMContentLoaded", event => {
             xSymbol.setAttribute('src', 'https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-x.svg');
             const oSymbol = document.createElement('img');
             oSymbol.setAttribute('src', 'https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-o.svg');
-
             if (xTurn) {
-               placeMarker('X', xSymbol, event.target, position, square);
+                placeMarker('X', xSymbol, event.target, position, square);
+                computerMove(oSymbol)
             } else {
                 placeMarker('O', oSymbol, event.target, position, square);
-            }
-        })
+                computerMove(xSymbol)
 
+            }
+
+
+        });
+    }
+
+
+    function computerMove(computerSymbol) {
+        if (remainingIndex.length === 0) return;
+        let randomIndex = Math.floor((Math.random() * remainingIndex.length - 1)  + 1)
+        let square = squares[remainingIndex[randomIndex]];
+        const oSymbol = document.createElement('img');
+        oSymbol.setAttribute('src', 'https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-o.svg');
+
+        square.appendChild(computerSymbol);
+        square.style.pointerEvents = 'none'
+        boardStatus[remainingIndex[randomIndex]] = computer
+        let index = remainingIndex.indexOf(remainingIndex[randomIndex]);
+
+        remainingIndex.splice(index, 1);
+
+        xTurn = !xTurn
+        checkDraw();
+        checkWin(computer);
+        storeGameState()
     }
 
     function placeMarker(player, playerSymbol, target, position, square) {
+        let index = remainingIndex.indexOf(position);
+        remainingIndex.splice(index, 1);
         target.appendChild(playerSymbol);
         square.style.pointerEvents = "none"
         boardStatus[position] = player
@@ -60,16 +96,25 @@ window.addEventListener("DOMContentLoaded", event => {
 
             xTurn = true;
             giveUp = '';
+            remainingIndex = ['0','1','2','3','4','5','6','7','8']
             squares.forEach(square => {
                 if (square.firstChild) {
                     square.removeChild(square.firstChild);
                 }
                 square.style.pointerEvents = "auto";
             })
+            if (Math.random() > .5) {
+                computer = 'X'
+            } else {
+                computer = 'O'
+            }
             gameStatus.innerHTML = '';
             newGameButton.style.display = 'none'
             giveUpButton.style.display = 'block'
             storeGameState()
+            if (computer === 'X') {
+                computerMove(xSymbol)
+            }
         })
     }
 
@@ -101,17 +146,20 @@ window.addEventListener("DOMContentLoaded", event => {
                                   [2, 4, 6]];
 
         // Loops through each winCondition and checks if the index corresponds with boardStatus for the player
-        let playerWon = winningPositions.some(winCondition => {
+        let userWon = winningPositions.some(winCondition => {
             return winCondition.every(index => boardStatus[index] === player)
         });
 
-        if (playerWon) {
+        if (userWon) {
             // disables all squares from being clickable
             squares.forEach(square => square.style.pointerEvents = "none");
+            remainingIndex = []
             giveUpButton.style.display = 'none'
             gameStatus.innerHTML = `Winner: ${player}`
-            newGame()
+            return newGame()
         }
+
+        // return playerWon;
     }
 
     function checkDraw() {
@@ -129,7 +177,7 @@ window.addEventListener("DOMContentLoaded", event => {
     }
 
     function storeGameState() {
-        localStorage.setItem('tic-tac-toe-save-state',JSON.stringify([boardStatus, xTurn, giveUp]))
+        localStorage.setItem('tic-tac-toe-save-state',JSON.stringify([boardStatus, xTurn, giveUp, computer, remainingIndex]))
     }
 
     function loadGameState() {
@@ -139,9 +187,14 @@ window.addEventListener("DOMContentLoaded", event => {
         let savedState = JSON.parse(localStorage.getItem('tic-tac-toe-save-state'))
         let board = savedState[0];
         let turn = savedState[1];
-        let giveUp = savedState[2];
+        let setGiveUp = savedState[2];
+        let setComputer = savedState[3];
+        let setRemainingIndex = savedState[4];
+        remainingIndex = setRemainingIndex
         boardStatus = board;
         xTurn = turn;
+        computer = setComputer
+        // remainingIndex = setRemainingIndex
 
 
 
@@ -163,7 +216,7 @@ window.addEventListener("DOMContentLoaded", event => {
 
         }
 
-        if (giveUp !== '') {
+        if (setGiveUp !== '') {
             squares.forEach(square => square.style.pointerEvents = 'none');
             gameStatus.innerHTML = giveUp;
             giveUpButton.style.display = 'none'
@@ -175,5 +228,4 @@ window.addEventListener("DOMContentLoaded", event => {
         checkDraw();
 
     }
-
 })
