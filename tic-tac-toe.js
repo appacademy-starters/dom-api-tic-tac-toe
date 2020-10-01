@@ -1,16 +1,18 @@
-window.addEventListener("DOMcontentLoaded", (e) => {
-const turn = "X";
-const squares = document.querySelectorAll(".square");
+window.addEventListener("DOMContentLoaded", (e) => {
+    let currentPlayerSymbol  = "X";
+    const squareValues = ["","","","","","","","",""];
+    const squares = document.querySelectorAll(".square");
 
-squares.forEach(square => {
-    square.addEventListener("click", (e) => {
-        e.target.innerHTML = "<img src='player-x.svg'>"
+    const grid = document.getElementById("tic-tac-toe-board");
+
+    grid.addEventListener("click", e => {
+        const gridId = e.target.id;
+        if (gridId.startsWith("square-")) {
+            const sqIndex = Number.parseInt(gridId.slice(7));
+            if (squareValues[sqIndex] === "") {
+
+            }
+        }
     })
-})
-
-
-
-
-
 
 })
