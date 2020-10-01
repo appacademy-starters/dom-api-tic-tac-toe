@@ -21,9 +21,14 @@ window.addEventListener("DOMContentLoaded", (e) => {
             gameStatus = "Player O wins";
         } else if (!squareValues.includes("")){
             gameStatus = "None";
+        
+        } else {
+            const newGame = document.getElementById("new-game");
+            newGame.removeAttribute("disabled");
         }
         const status = document.getElementById("game-status");
         status.innerHTML = gameStatus;
+
     }
 
     const grid = document.getElementById("tic-tac-toe-board");
