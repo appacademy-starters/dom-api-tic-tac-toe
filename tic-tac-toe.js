@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
     let currentPlayerSymbol  = "x";
     const squareValues = ["","","","","","","","",""];
     const squares = document.querySelectorAll(".square");
-    const gameStatus = "";
+    let gameStatus = "";
 
     function checkGameStatus(){
         const newArray = [];
@@ -14,6 +14,16 @@ window.addEventListener("DOMContentLoaded", (e) => {
         const checkColumn3 = squareValues[2] + squareValues[5] + squareValues[8];
         const checkDiagonal1 = squareValues[0] + squareValues[4] + squareValues[8];
         const checkDiagonal2 = squareValues[2] + squareValues[4] + squareValues[6];
+        newArray.push(checkRow1, checkRow2, checkRow3, checkColumn1, checkColumn2, checkColumn3, checkDiagonal1, checkDiagonal2);
+        if (newArray.includes("xxx")) {
+            gameStatus = "Player X wins";
+        } else if (newArray.includes("ooo")) {
+            gameStatus = "Player O wins";
+        } else if (!squareValues.includes("")){
+            gameStatus = "None";
+        }
+        const status = document.getElementById("game-status");
+        status.innerHTML = gameStatus;
     }
 
     const grid = document.getElementById("tic-tac-toe-board");
@@ -32,6 +42,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
                 } else{
                     currentPlayerSymbol = "x";
                 }
+                checkGameStatus();
             }
         }
     })
