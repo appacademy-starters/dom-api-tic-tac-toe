@@ -1,8 +1,35 @@
 window.addEventListener("DOMContentLoaded", (e) => {
     let currentPlayerSymbol  = "x";
-    const squareValues = ["","","","","","","","",""];
-    const squares = document.querySelectorAll(".square");
+    let squareValues = ["","","","","","","","",""];
+    const newGame = document.getElementById("new-game");
+    const status = document.getElementById("game-status");
+    const giveUp = document.getElementById("give-up");
     let gameStatus = "";
+
+
+    newGame.addEventListener("click", (e) => {
+        currentPlayerSymbol = "x";
+        squareValues = ["", "", "", "", "", "", "", "", ""];
+        gameStatus = "";
+        status.innerHTML = "";
+        for (let i = 0; i <= 8; i++) {
+            let image = document.getElementById(`square-${i}`);
+            image.innerHTML = "";
+        }
+        newGame.setAttribute("disabled", "true");
+        giveUp.removeAttribute("disabled");
+    })
+
+    giveUp.addEventListener("click", (e) => {
+        if (currentPlayerSymbol === "x") {
+            gameStatus = "O";
+        } else {
+            gameStatus = "X"
+        }
+        status.innerHTML = `Player ${gameStatus} wins`;
+        newGame.removeAttribute("disabled");
+        giveUp.setAttribute("disabled", "true");
+    })
 
     function checkGameStatus(){
         const newArray = [];
@@ -16,19 +43,20 @@ window.addEventListener("DOMContentLoaded", (e) => {
         const checkDiagonal2 = squareValues[2] + squareValues[4] + squareValues[6];
         newArray.push(checkRow1, checkRow2, checkRow3, checkColumn1, checkColumn2, checkColumn3, checkDiagonal1, checkDiagonal2);
         if (newArray.includes("xxx")) {
-            gameStatus = "Player X wins";
+            gameStatus = "Player X";
+            giveUp.setAttribute("disabled", "true");
         } else if (newArray.includes("ooo")) {
-            gameStatus = "Player O wins";
+            gameStatus = "Player O";
+            giveUp.setAttribute("disabled", "true");
         } else if (!squareValues.includes("")){
             gameStatus = "None";
-        
+            giveUp.setAttribute("disabled", "true");
         } else {
-            const newGame = document.getElementById("new-game");
             newGame.removeAttribute("disabled");
         }
-        const status = document.getElementById("game-status");
-        status.innerHTML = gameStatus;
-
+        if (gameStatus !== "") {
+            status.innerHTML = `${gameStatus} wins`;
+        }
     }
 
     const grid = document.getElementById("tic-tac-toe-board");
