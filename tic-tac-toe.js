@@ -31,6 +31,23 @@ window.addEventListener("DOMContentLoaded", (e) => {
         giveUp.setAttribute("disabled", "true");
     })
 
+    function save (){
+        localStorage.setItem("squarevalues", JSON.stringify(squareValues))
+        localStorage.setItem("currentPlayerSymbol", currentPlayerSymbol)
+    }
+
+    function clear(){
+        localStorage.removeItem("squarevalues" );
+        localStorage.removeItem("currentPlayerSymbol");
+    }
+
+    function restore(){
+        if (localStorage.getItem("squarevalues")){
+            currentPlayerSymbol = localStorage.getItem("currentPlayerSymbol")
+            squareValues = localStorage.getItem("squarevalues")
+        }
+    }
+
     function checkGameStatus(){
         const newArray = [];
         const checkRow1 = squareValues[0] + squareValues[1] + squareValues[2];
@@ -45,13 +62,18 @@ window.addEventListener("DOMContentLoaded", (e) => {
         if (newArray.includes("xxx")) {
             gameStatus = "Player X";
             giveUp.setAttribute("disabled", "true");
+            clear();
         } else if (newArray.includes("ooo")) {
             gameStatus = "Player O";
             giveUp.setAttribute("disabled", "true");
+            clear();
         } else if (!squareValues.includes("")){
             gameStatus = "None";
             giveUp.setAttribute("disabled", "true");
+            clear();
         } else {
+            save();
+
             newGame.removeAttribute("disabled");
         }
         if (gameStatus !== "") {
