@@ -6,6 +6,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
     const giveUp = document.getElementById("give-up");
     let gameStatus = "";
 
+    restore();
 
     newGame.addEventListener("click", (e) => {
         currentPlayerSymbol = "x";
@@ -43,8 +44,16 @@ window.addEventListener("DOMContentLoaded", (e) => {
 
     function restore(){
         if (localStorage.getItem("squarevalues")){
-            currentPlayerSymbol = localStorage.getItem("currentPlayerSymbol")
-            squareValues = localStorage.getItem("squarevalues")
+            currentPlayerSymbol = localStorage.getItem("currentPlayerSymbol");
+            squareValues = localStorage.getItem("squarevalues");
+            for (let i = 0; i < squareValues.length; i++) {
+                if (squareValues[i]==="x"||squareValues[i] === "o") {
+                    let img = document.createElement("img");
+                    img.setAttribute("src", `player-${squareValues[i]}.svg`);
+                    let square = document.querySelector("#square-"+i);
+                    square.appendChild(img);
+                }
+            }
         }
     }
 
