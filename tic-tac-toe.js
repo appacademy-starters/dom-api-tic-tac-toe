@@ -4,19 +4,25 @@ window.addEventListener("DOMContentLoaded", (e) => {
     const newGame = document.getElementById("new-game");
     const status = document.getElementById("game-status");
     const giveUp = document.getElementById("give-up");
+    const grid = document.getElementById("tic-tac-toe-board");
     let gameStatus = "";
     let computerSymbol = "";
+    let playerSymbol = "";
 
-        (() => {
-            let randomNum = Math.floor(Math.random()* 100)%2;
-            if (randomNum === 0){
-                computerSymbol = "x"
-            } else {
-                computerSymbol ="o"
-            }
-        })()
+    (() => {
+        let randomNum = Math.floor(Math.random()* 100)%2;
+        if (randomNum === 0){
+            computerSymbol = "x";
+            playerSymbol = "o";
+            computerTurn();
+        } else {
+            computerSymbol ="o";
+            playerSymbol = "x";
+        }
+    })()
+
     restore();
-    
+
     newGame.addEventListener("click", (e) => {
         currentPlayerSymbol = "x";
         squareValues = ["", "", "", "", "", "", "", "", ""];
@@ -94,7 +100,9 @@ window.addEventListener("DOMContentLoaded", (e) => {
             clear();
         } else {
             save();
-
+            if (currentPlayerSymbol === computerSymbol) {
+                computerTurn();
+            }
             newGame.removeAttribute("disabled");
         }
         if (gameStatus !== "") {
@@ -102,7 +110,24 @@ window.addEventListener("DOMContentLoaded", (e) => {
         }
     }
 
-    const grid = document.getElementById("tic-tac-toe-board");
+    function computerTurn () {
+        let randomNum = Math.floor(Math.random()*100) % 9;
+        if (squareValues[randomNum]==="") {
+            const img = document.createElement("img");
+            img.setAttribute("src", `player-${computerSymbol}.svg`);
+            let square = document.querySelector(`#square-${randomNum}`);
+            square.appendChild(img);
+            squareValues[randomNum] = computerSymbol;
+            if (currentPlayerSymbol === "x") {
+                currentPlayerSymbol = "o";
+            } else {
+                currentPlayerSymbol = "x";
+            }
+            checkGameStatus();
+        } else {
+            computerTurn();
+        }
+    }
 
     grid.addEventListener("click", e => {
         const gridId = e.target.id;
@@ -110,9 +135,9 @@ window.addEventListener("DOMContentLoaded", (e) => {
             const sqIndex = Number.parseInt(gridId.slice(7));
             if (squareValues[sqIndex] === "") {
                 const img = document.createElement("img");
-                img.setAttribute("src", `player-${currentPlayerSymbol}.svg`);
+                img.setAttribute("src", `player-${playerSymbol}.svg`);
                 e.target.appendChild(img);
-                squareValues[sqIndex] = currentPlayerSymbol;
+                squareValues[sqIndex] = playerSymbol;
                 if(currentPlayerSymbol === "x"){
                     currentPlayerSymbol = "o";
                 } else{
