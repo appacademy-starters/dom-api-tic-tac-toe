@@ -5,9 +5,18 @@ window.addEventListener("DOMContentLoaded", (e) => {
     const status = document.getElementById("game-status");
     const giveUp = document.getElementById("give-up");
     let gameStatus = "";
+    let computerSymbol = "";
 
+        (() => {
+            let randomNum = Math.floor(Math.random()* 100)%2;
+            if (randomNum === 0){
+                computerSymbol = "x"
+            } else {
+                computerSymbol ="o"
+            }
+        })()
     restore();
-
+    
     newGame.addEventListener("click", (e) => {
         currentPlayerSymbol = "x";
         squareValues = ["", "", "", "", "", "", "", "", ""];
@@ -19,6 +28,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
         }
         newGame.setAttribute("disabled", "true");
         giveUp.removeAttribute("disabled");
+        clear();
     })
 
     giveUp.addEventListener("click", (e) => {
@@ -30,6 +40,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
         status.innerHTML = `Player ${gameStatus} wins`;
         newGame.removeAttribute("disabled");
         giveUp.setAttribute("disabled", "true");
+        clear();
     })
 
     function save (){
@@ -44,8 +55,9 @@ window.addEventListener("DOMContentLoaded", (e) => {
 
     function restore(){
         if (localStorage.getItem("squarevalues")){
+            newGame.removeAttribute("disabled")
             currentPlayerSymbol = localStorage.getItem("currentPlayerSymbol");
-            squareValues = localStorage.getItem("squarevalues");
+            squareValues = JSON.parse(localStorage.getItem("squarevalues"));
             for (let i = 0; i < squareValues.length; i++) {
                 if (squareValues[i]==="x"||squareValues[i] === "o") {
                     let img = document.createElement("img");
