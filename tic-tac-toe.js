@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
     let computerSymbol = "";
     let playerSymbol = "";
 
-    (() => {
+    function giveComputerSymbol() {
         let randomNum = Math.floor(Math.random()* 100)%2;
         if (randomNum === 0){
             computerSymbol = "x";
@@ -19,7 +19,8 @@ window.addEventListener("DOMContentLoaded", (e) => {
             computerSymbol ="o";
             playerSymbol = "x";
         }
-    })()
+    }
+    giveComputerSymbol()
 
     restore();
 
@@ -35,6 +36,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
         newGame.setAttribute("disabled", "true");
         giveUp.removeAttribute("disabled");
         clear();
+        giveComputerSymbol();
     })
 
     giveUp.addEventListener("click", (e) => {
@@ -52,17 +54,25 @@ window.addEventListener("DOMContentLoaded", (e) => {
     function save (){
         localStorage.setItem("squarevalues", JSON.stringify(squareValues))
         localStorage.setItem("currentPlayerSymbol", currentPlayerSymbol)
+        localStorage.setItem("computerSymbol", computerSymbol);
     }
 
     function clear(){
         localStorage.removeItem("squarevalues" );
         localStorage.removeItem("currentPlayerSymbol");
+        localStorage.removeItem("computerSymbol");
     }
 
     function restore(){
         if (localStorage.getItem("squarevalues")){
             newGame.removeAttribute("disabled")
             currentPlayerSymbol = localStorage.getItem("currentPlayerSymbol");
+            computerSymbol = localStorage.getItem("computerSymbol")
+            if (computerSymbol === "x"){
+                playerSymbol = "o"
+            } else {
+                playerSymbol = "x"
+            }
             squareValues = JSON.parse(localStorage.getItem("squarevalues"));
             for (let i = 0; i < squareValues.length; i++) {
                 if (squareValues[i]==="x"||squareValues[i] === "o") {
@@ -87,15 +97,23 @@ window.addEventListener("DOMContentLoaded", (e) => {
         const checkDiagonal2 = squareValues[2] + squareValues[4] + squareValues[6];
         newArray.push(checkRow1, checkRow2, checkRow3, checkColumn1, checkColumn2, checkColumn3, checkDiagonal1, checkDiagonal2);
         if (newArray.includes("xxx")) {
-            gameStatus = "Player X";
+            if (computerSymbol === "x"){
+            gameStatus = "Computer";
+            } else {
+                gameStatus = "User"
+            }
             giveUp.setAttribute("disabled", "true");
             clear();
         } else if (newArray.includes("ooo")) {
-            gameStatus = "Player O";
+            if (computerSymbol === "o"){
+            gameStatus = "Computer";
+            }else {
+                gameStatus = "User"
+            }
             giveUp.setAttribute("disabled", "true");
             clear();
         } else if (!squareValues.includes("")){
-            gameStatus = "None";
+            gameStatus = "Nobody";
             giveUp.setAttribute("disabled", "true");
             clear();
         } else {
@@ -123,6 +141,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
             } else {
                 currentPlayerSymbol = "x";
             }
+            save();
             checkGameStatus();
         } else {
             computerTurn();
