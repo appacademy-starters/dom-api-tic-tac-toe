@@ -13,9 +13,9 @@ window.addEventListener('DOMContentLoaded', event => {
                 return; // Square already taken, make no changes
             } else {
                 const playerSymbol = document.createElement('img');
-                playerSymbol.src = `https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-${currentPlayerSymbol}.svg`;
+                playerSymbol.src = `https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-${currentPlayerSymbol}.svg`; // Used template literal to change img as currentPlayerSymbol changes
                 event.target.appendChild(playerSymbol);
-                squareValues[num] = currentPlayerSymbol;
+                squareValues[num] = currentPlayerSymbol; // Fill array with x/o player added
                 if (currentPlayerSymbol === 'x') {
                     currentPlayerSymbol = 'o';
                 } else {
@@ -24,5 +24,4 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         }
     })
-
 })
