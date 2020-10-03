@@ -16,27 +16,26 @@ window.addEventListener("DOMContentLoaded", (e) => {
 
 /********************* HELPER FUNCTIONS ***********************************/
 
-    function combinations () {
-        const cellsCombinations = {
-            row1: [0, 1, 2],
-            row2: [3, 4, 5],
-            row3: [6, 7, 8],
-            column1: [0, 3, 6],
-            column2: [1, 4, 7],
-            column3: [2, 5, 8],
-            diagonal1: [0, 4, 8],
-            diagonal2: [2, 4, 6]
-        };
+    function combinations (includeCells) {
+        const cellsCombinations = [
+            [3, 4, 5], //row2
+            [6, 7, 8], //row3
+            [0, 3, 6], //column1
+            [0, 1, 2], //row1
+            [1, 4, 7], //column2
+            [2, 5, 8], //column3
+            [0, 4, 8], //diagonal1
+            [2, 4, 6]  //diagonal2
+        ];
+
         const newArray = [];
 
-        for (let key in cellsCombinations) {
-            let cells = cellsCombinations[key];
-
+        cellsCombinations.forEach(cells => {
             let combination = "";
             cells.forEach(i => {combination += squareValues[i]});
             newArray.push(combination);
-        }
-
+        })
+        if (includeCells) newArray.push(cellsCombinations);
         return newArray;
     }
 
@@ -111,7 +110,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
                 if (winner) gameStatus = `Player ${winner.toUpperCase()}`
                 else gameStatus = "Nobody";
             }
-
+            squareValues = [winner, winner, winner, winner, winner, winner, winner, winner, winner]
             status.innerHTML = `${gameStatus} wins`;
             giveUp.setAttribute("disabled", "true");
             clear();
@@ -133,18 +132,62 @@ window.addEventListener("DOMContentLoaded", (e) => {
         }
     }
 
-    function computerTurn () {
-        let randomNum = Math.floor(Math.random()*100) % 9;
-        if (squareValues[randomNum]==="") {
-            let block = document.querySelector(`#square-${randomNum}`);
-            createImage(computerSymbol, block);
-            squareValues[randomNum] = computerSymbol;
-            switchCurrentPlayer();
-            save();
-            checkGameStatus();
-        } else {
-            computerTurn();
+    function smartChoice() {
+        const crazypart = Math.floor(Math.random()*100) % 2;
+        const danger = playerSymbol+playerSymbol;
+        const smellOfVictory = computerSymbol+computerSymbol;
+        const sets = combinations(true);
+        //if center is empty - take center
+        if (squareValues[4] === "" && crazypart === 1) {
+            return 4;
         }
+        //if there is combination close to victory
+        else if (sets.includes(smellOfVictory) && crazypart === 1) {
+            const set = sets.indexOf(smellOfVictory);
+            const cells = sets[sets.length - 1][set];
+            for (let c = 0; c < 3; c++) {
+                let i = cells[c];
+                if (squareValues[i] === "") return i;
+            }
+        }
+        //if there is combination close to fail
+        else if (sets.includes(danger) && crazypart === 1) {
+            const set = sets.indexOf(danger);
+            const cells = sets[sets.length-1][set];
+            for (let c = 0; c < 3; c++) {
+                let i = cells[c];
+                if(squareValues[i]==="") return i;
+            }
+        }
+        //if it doesn't have close to win or to lose, but sequence already started and has potential
+        else if (sets.includes(computerSymbol) && crazypart === 1) {
+            const set = sets.indexOf(computerSymbol);
+            const cells = sets[sets.length - 1][set];
+            for (let c = 0; c < 3; c++) {
+                let i = cells[c];
+                if (squareValues[i] === "") return i;
+            }
+        }
+        //if it doest't matter
+        else {
+            let randomNum = Math.floor(Math.random() * 100) % 9;
+            if (squareValues[randomNum] === "") {
+               return  randomNum;
+            }
+            else {
+                return smartChoice();
+            }
+        }
+    }
+
+    function computerTurn () {
+        let randomNum = smartChoice();
+        let block = document.querySelector(`#square-${randomNum}`);
+        createImage(computerSymbol, block);
+        squareValues[randomNum] = computerSymbol;
+        switchCurrentPlayer();
+        save();
+        checkGameStatus();
     }
 
     function resetGame () {
