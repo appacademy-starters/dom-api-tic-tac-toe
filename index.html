@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>App Academy DOM API Tic-Tac-Toe Project</title>
   <link rel="stylesheet" href="./site.css">
+  <script src="./tic-tac-toe.js"></script>
 </head>
 <body>
   <div id="game">
@@ -23,11 +24,12 @@
     </div>
 
     <div class="actions">
-      <button>New Game</button>
+      <button id="new-game" disabled>New Game</button>
       <div class="spacer"></div>
-      <button>Give Up</button>
+      <input type="checkbox" id="computer-mode"><label for="computer-mode">Play with computer</label>
+      <div class="spacer"></div>
+      <button id="give-up">Give Up</button>
     </div>
   </div>
-  <script src="./tic-tac-toe.js"></script>
 </body>
 </html>
